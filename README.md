@@ -52,22 +52,7 @@ A modern stock screening application that uses semantic search to find companies
    npm run dev
    ```
 
-## Project Structure
 
-```
-ticker-scout/
-├── prisma/              # Database schema and migrations
-├── public/              # Static assets
-├── scripts/             # Utility scripts
-│   ├── seed.ts         # Database seeding
-│   └── generate-embeddings.ts  # Vector embedding generation
-├── src/
-│   ├── app/            # Next.js app router pages
-│   │   ├── api/       # API routes
-│   │   └── page.tsx   # Main page
-│   └── components/     # React components
-└── .env                # Environment variables (not in git)
-```
 
 ## Development Scripts
 
