@@ -1,6 +1,7 @@
 # Ticker Scout 🔍
 
 A modern stock screening application that uses semantic search to find companies based on natural language descriptions.
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/32d5020f-3060-4629-a8cc-3f0d42aac999" />
 
 ## Features
 
