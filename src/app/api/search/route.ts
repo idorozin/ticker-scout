@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         const vectorDB = getVectorDB();
         
         // Search for similar companies using vector similarity
-        const similarCompanies = await vectorDB.searchSimilar(queryEmbedding, 1000);
+        const similarCompanies = await vectorDB.searchSimilar(queryEmbedding, 1000) as Array<{ companyId: number, similarity: number }>;
         console.log('📊 Vector search results:', similarCompanies.length);
         
         // Also get companies that don't have embeddings and do text search on them

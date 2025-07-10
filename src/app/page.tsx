@@ -3,6 +3,20 @@
 import { useState, useEffect } from 'react';
 import { Search, TrendingUp, Filter, BarChart3 } from 'lucide-react';
 
+function formatMarketCap(marketCap: number): string {
+  if (!marketCap) return 'N/A';
+  
+  if (marketCap >= 1e12) {
+    return `$${(marketCap / 1e12).toFixed(1)}T`;
+  } else if (marketCap >= 1e9) {
+    return `$${(marketCap / 1e9).toFixed(1)}B`;
+  } else if (marketCap >= 1e6) {
+    return `$${(marketCap / 1e6).toFixed(1)}M`;
+  } else {
+    return `$${marketCap.toLocaleString()}`;
+  }
+}
+
 export default function StockScreener() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -68,18 +82,6 @@ export default function StockScreener() {
       setResults([]);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const formatMarketCap = (marketCap: number) => {
-    if (marketCap >= 1e12) {
-      return `$${(marketCap / 1e12).toFixed(1)}T`;
-    } else if (marketCap >= 1e9) {
-      return `$${(marketCap / 1e9).toFixed(1)}B`;
-    } else if (marketCap >= 1e6) {
-      return `$${(marketCap / 1e6).toFixed(1)}M`;
-    } else {
-      return `$${marketCap?.toLocaleString() || 'N/A'}`;
     }
   };
 
@@ -244,36 +246,41 @@ export default function StockScreener() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Location
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      Relevance
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                   {results.map((company: any, index) => (
-                    <tr key={company.id || index} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="text-sm font-medium text-slate-900 dark:text-white">
-                            {company.shortName || company.longName}
-                          </div>
-                          {company.industry && (
-                            <div className="text-sm text-slate-500 dark:text-slate-400">
-                              {company.industry}
-                            </div>
-                          )}
-                        </div>
+                    <tr key={company.id} className={index % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-slate-50 dark:bg-slate-800/50'}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-slate-900 dark:text-white">{company.shortName}</div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200">
-                          {company.symbol}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                        {company.symbol}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
                         {company.sector || 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
                         {formatMarketCap(company.marketCap)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
-                        {[company.city, company.state, company.country].filter(Boolean).join(', ') || 'N/A'}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                        {company.city}, {company.state || company.country}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-16 bg-slate-200 dark:bg-slate-700 rounded-full h-2 mr-2">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full" 
+                              style={{ width: `${(company.similarity || 0) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-sm text-slate-900 dark:text-white">
+                            {((company.similarity || 0) * 100).toFixed(0)}%
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   ))}
