@@ -48,9 +48,6 @@ next-env.d.ts
 *.db
 *.db-journal
 
-# CSV data files
-*.csv
-
 # IDE
 .vscode/
 .idea/
