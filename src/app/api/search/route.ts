@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     
     const companies = await performSearch(query, {
-      sector,
-      minMarketCap,
-      maxMarketCap,
+      sector: sector || undefined,
+      minMarketCap: minMarketCap || undefined,
+      maxMarketCap: maxMarketCap || undefined,
       limit,
     });
 
