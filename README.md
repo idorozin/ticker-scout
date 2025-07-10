@@ -15,7 +15,7 @@ A modern stock screening application that uses semantic search to find companies
 
 - Node.js 18+ and npm
 - OpenAI API key for semantic search functionality
-dataset taken from - https://www.kaggle.com/datasets/andrewmvd/sp-500-stocks
+- dataset taken from - https://www.kaggle.com/datasets/andrewmvd/sp-500-stocks
 ## Setup
 
 1. Clone the repository:
