@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ticker Scout 🔍
 
-## Getting Started
+A modern stock screening application that uses semantic search to find companies based on natural language descriptions.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🔎 Semantic search powered by OpenAI embeddings
+- 📊 S&P 500 company data
+- 🎯 Filter by sector and market cap
+- ⚡ Fast vector similarity search using sqlite-vec
+- 🎨 Modern UI with Tailwind CSS
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- OpenAI API key for semantic search functionality
+
+## Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/ticker-scout.git
+   cd ticker-scout
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` and add your OpenAI API key:
+   ```
+   DATABASE_URL="file:./dev.db"
+   OPENAI_API_KEY="your-api-key-here"
+   ```
+
+4. Initialize the database and generate embeddings:
+   ```bash
+   npm run db:setup
+   ```
+   This will:
+   - Create SQLite database
+   - Load S&P 500 company data
+   - Generate embeddings for company descriptions
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Project Structure
+
+```
+ticker-scout/
+├── prisma/              # Database schema and migrations
+├── public/              # Static assets
+├── scripts/             # Utility scripts
+│   ├── seed.ts         # Database seeding
+│   └── generate-embeddings.ts  # Vector embedding generation
+├── src/
+│   ├── app/            # Next.js app router pages
+│   │   ├── api/       # API routes
+│   │   └── page.tsx   # Main page
+│   └── components/     # React components
+└── .env                # Environment variables (not in git)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run db:push` - Push schema changes to database
+- `npm run db:seed` - Seed the database with S&P 500 data
+- `npm run db:setup` - Full setup (schema + seed + embeddings)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technical Details
 
-## Learn More
+- **Framework**: Next.js 14 with App Router
+- **Database**: SQLite with Prisma ORM
+- **Vector Search**: sqlite-vec extension
+- **Embeddings**: OpenAI text-embedding-3-small
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License - feel free to use this project for any purpose.

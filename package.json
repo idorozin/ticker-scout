@@ -9,11 +9,14 @@
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "tsx scripts/seed.ts",
+    "db:embeddings": "tsx scripts/generate-embeddings.ts",
+    "db:setup": "tsx scripts/setup-complete.ts",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "better-sqlite3": "^12.2.0",
     "csv-parser": "^3.0.0",
     "dotenv": "^17.2.0",
     "lucide-react": "^0.460.0",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

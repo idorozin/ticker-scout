@@ -24,7 +24,7 @@ interface CsvRow {
   Weight: string;
 }
 
-async function main() {
+export async function loadCSVData() {
   console.log('Starting to seed database...');
   
   // Clear existing data
@@ -87,11 +87,14 @@ async function main() {
   });
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  }); 
+// Run the script if called directly
+if (require.main === module) {
+  loadCSVData()
+    .catch((e: any) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+} 
