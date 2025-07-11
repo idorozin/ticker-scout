@@ -1,0 +1,38 @@
+// This is your Prisma schema file for PostgreSQL,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                    Int      @id @default(autoincrement())
+  exchange              String
+  symbol                String   @unique
+  shortName             String
+  longName              String
+  sector                String
+  industry              String
+  currentPrice          Float?
+  marketCap             Float?
+  ebitda                Float?
+  revenueGrowth         Float?
+  city                  String?
+  state                 String?
+  country               String?
+  fullTimeEmployees     Int?
+  longBusinessSummary   String?
+  weight                Float?
+  // For SQLite: store as BLOB, for PostgreSQL: store as BLOB (vector extension handled separately)
+  embedding             Bytes?
+  embeddingGenerated    Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("companies")
+} 
