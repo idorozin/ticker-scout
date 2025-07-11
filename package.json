@@ -12,7 +12,11 @@
     "db:embeddings": "tsx scripts/generate-embeddings.ts",
     "db:setup": "tsx scripts/setup-complete.ts",
     "db:reset": "prisma migrate reset --force",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:switch-sqlite": "node scripts/switch-db.js sqlite",
+    "db:switch-postgresql": "node scripts/switch-db.js postgresql",
+    "db:create": "node scripts/create-database.js",
+    "db:create-schema": "node scripts/create-schema.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -22,6 +26,8 @@
     "lucide-react": "^0.460.0",
     "next": "15.3.5",
     "openai": "^5.8.4",
+    "pg": "^8.12.0",
+    "pgvector": "^0.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sqlite-vec": "^0.1.7-alpha.2",
@@ -32,6 +38,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
+    "@types/pg": "^8.11.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

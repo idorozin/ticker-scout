@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { OpenAI } from 'openai';
 import 'dotenv/config';
-import { getVectorDB } from 'lib/db/vectorDBFactory';
-import { VectorDB } from 'lib/db/sqliteVectorDB'; // Import VectorDB interface
+import { getVectorDB } from '../src/lib/db/vectorDBFactory';
+import { VectorDB } from '../src/lib/db/sqliteVectorDB'; // Import VectorDB interface
 
 // Initialize Prisma Client for database interactions
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ const openai = new OpenAI({
  * @param text The text string for which to generate an embedding.
  * @returns A promise that resolves to an array of numbers representing the embedding.
  */
-async function generateEmbedding(text: string): Promise<number[]> {
+export async function generateEmbedding(text: string): Promise<number[]> {
   if (!text || text.trim().length === 0) {
     console.log('Empty text provided, returning zero vector');
     // Return a zero vector of the expected dimension (1536 for text-embedding-3-small)
@@ -46,7 +46,7 @@ async function generateEmbedding(text: string): Promise<number[]> {
  * for company business summaries. It fetches companies, generates embeddings in batches,
  * and stores them in both the vector database and Prisma.
  */
-async function generateEmbeddingsForCompanies() {
+export async function generateEmbeddingsForCompanies() {
   console.log('Starting embedding generation process...');
   
   // Ensure OpenAI API key is set before proceeding
@@ -143,6 +143,3 @@ async function generateEmbeddingsForCompanies() {
 if (require.main === module) {
   generateEmbeddingsForCompanies().catch(console.error);
 }
-
-// Export functions for potential use in other modules (e.g., API routes)
-export { generateEmbeddingsForCompanies, generateEmbedding };

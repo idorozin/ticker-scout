@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { generateEmbedding } from 'scripts/generate-embeddings';
-import { getVectorDB } from 'db/vectorDBFactory';
-import { VectorDB } from 'db/sqliteVectorDB';
+import { generateEmbedding } from '../../../scripts/generate-embeddings';
+import { getVectorDB } from '../db/vectorDBFactory';
+import { VectorDB } from '../db/sqliteVectorDB';
 
 const prisma = new PrismaClient();
 

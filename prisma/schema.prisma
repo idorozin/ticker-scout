@@ -3,11 +3,13 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["ticker_scout"]
 }
 
 model Company {
@@ -28,11 +30,12 @@ model Company {
   fullTimeEmployees     Int?
   longBusinessSummary   String?
   weight                Float?
-  // For SQLite: store as BLOB, for PostgreSQL: will be vector type
+  // For SQLite: store as BLOB, for PostgreSQL: store as BLOB (vector extension handled separately)
   embedding             Bytes?
   embeddingGenerated    Boolean  @default(false)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
   @@map("companies")
-}
+  @@schema("ticker_scout")
+} 

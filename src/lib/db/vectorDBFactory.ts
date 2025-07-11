@@ -5,17 +5,16 @@ import { PostgreSQLVectorDB } from './postgresVectorDB';
  * @function getVectorDB
  * @description Factory function to return the appropriate VectorDB implementation
  * based on the DATABASE_URL environment variable.
- * Defaults to SQLiteVectorDB if no specific provider is detected.
+ * Since the schema is now set to PostgreSQL, we use PostgreSQL by default.
  * @returns An instance of a class implementing the VectorDB interface.
  */
 export function getVectorDB(): VectorDB {
-  const dbProvider = process.env.DATABASE_URL?.startsWith('postgresql') ? 'postgresql' : 'sqlite';
+  const dbUrl = process.env.DATABASE_URL;
   
-  switch (dbProvider) {
-    case 'postgresql':
-      return new PostgreSQLVectorDB();
-    case 'sqlite':
-    default:
-      return new SQLiteVectorDB();
+  // If DATABASE_URL starts with 'file:', use SQLite, otherwise use PostgreSQL
+  if (dbUrl?.startsWith('file:')) {
+    return new SQLiteVectorDB();
+  } else {
+    return new PostgreSQLVectorDB();
   }
 }
