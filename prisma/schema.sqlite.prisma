@@ -28,8 +28,6 @@ model Company {
   fullTimeEmployees     Int?
   longBusinessSummary   String?
   weight                Float?
-  embedding             Bytes?
-  embeddingGenerated    Boolean  @default(false)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
