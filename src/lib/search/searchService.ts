@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { generateEmbedding } from '../../../scripts/generate-embeddings';
 import { getVectorDB } from '../db/vectorDBFactory';
-import { VectorDB } from '../db/sqliteVectorDB';
 
 const prisma = new PrismaClient();
 
@@ -20,66 +19,32 @@ export async function performSearch(
 
   if (query) {
     try {
+      // Generate embedding for the search query
       const queryEmbedding = await generateEmbedding(query);
-      const vectorDB: VectorDB = getVectorDB();
 
-      const similarCompanies = await vectorDB.searchSimilar(queryEmbedding, 1000) as Array<{ companyId: number, similarity: number }>;
-
-      let allCompanyIds: number[] = [];
-      let similarityMap = new Map<number, number>();
-
-      if (similarCompanies.length > 0) {
-        similarCompanies.forEach((result: { companyId: number, similarity: number }) => {
-          allCompanyIds.push(result.companyId);
-          similarityMap.set(result.companyId, result.similarity);
-        });
+      // Perform optimized vector search with company data
+      const vectorDB = getVectorDB();
+      
+      // Prepare filters for the optimized query
+      const dbFilters: any = {};
+      if (filters.sector) {
+        dbFilters.sector = filters.sector;
       }
-
-      if (allCompanyIds.length === 0) {
-        companies = [];
-      } else {
-        const whereClause: any = {
-          id: {
-            in: allCompanyIds
-          }
-        };
-
-        if (filters.sector) {
-          whereClause.sector = {
-            equals: filters.sector
-          };
-        }
-
-        if (filters.minMarketCap) {
-          whereClause.marketCap = {
-            gte: parseFloat(filters.minMarketCap)
-          };
-        }
-
-        if (filters.maxMarketCap) {
-          whereClause.marketCap = {
-            ...whereClause.marketCap,
-            lte: parseFloat(filters.maxMarketCap)
-          };
-        }
-
-        const filteredCompanies = await prisma.company.findMany({
-          where: whereClause,
-        });
-
-        companies = filteredCompanies
-          .map((company: any) => ({
-            ...company,
-            similarity: similarityMap.get(company.id) || 0
-          }))
-          .sort((a: any, b: any) => (b.similarity as number) - (a.similarity as number))
-          .slice(0, filters.limit);
+      if (filters.minMarketCap) {
+        dbFilters.minMarketCap = parseFloat(filters.minMarketCap);
       }
+      if (filters.maxMarketCap) {
+        dbFilters.maxMarketCap = parseFloat(filters.maxMarketCap);
+      }
+      
+      // Single optimized query that gets everything
+      companies = await vectorDB.searchSimilarWithCompanyData(queryEmbedding, filters.limit, dbFilters);
     } catch (error) {
-      // If semantic search fails, re-throw the error as requested
+      console.error('Semantic search failed:', error);
       throw error;
     }
   } else {
+    // Non-semantic search (filters only)
     const whereClause: any = {};
 
     if (filters.sector) {

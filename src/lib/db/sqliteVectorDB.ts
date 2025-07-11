@@ -11,6 +11,15 @@ export interface VectorDB {
   initializeVectorSupport(): Promise<void>;
   storeEmbedding(companyId: number, embedding: number[]): Promise<void>;
   searchSimilar(queryEmbedding: number[], limit: number): Promise<Array<{ companyId: number, similarity: number }>>;
+  searchSimilarWithCompanyData(
+    queryEmbedding: number[], 
+    limit: number, 
+    filters?: {
+      sector?: string;
+      minMarketCap?: number;
+      maxMarketCap?: number;
+    }
+  ): Promise<any[]>;
 }
 
 /**
@@ -123,6 +132,88 @@ export class SQLiteVectorDB implements VectorDB {
       }));
     } catch (error) {
       console.error('Vector search error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Optimized search with company data and filters for SQLite.
+   * @param queryEmbedding The embedding of the search query.
+   * @param limit The maximum number of similar companies to return.
+   * @param filters Optional filters to apply.
+   * @returns A promise that resolves to an array of company objects with similarity scores.
+   */
+  async searchSimilarWithCompanyData(
+    queryEmbedding: number[], 
+    limit: number, 
+    filters?: {
+      sector?: string;
+      minMarketCap?: number;
+      maxMarketCap?: number;
+    }
+  ): Promise<any[]> {
+    try {
+      // Convert the query embedding to a BLOB (Buffer)
+      const queryBuffer = Buffer.from(new Float32Array(queryEmbedding).buffer);
+      
+      // Build WHERE conditions for filters
+      let whereConditions = [];
+      let params: any[] = [queryBuffer];
+      
+      if (filters?.sector) {
+        whereConditions.push(`c.sector = ?`);
+        params.push(filters.sector);
+      }
+      
+      if (filters?.minMarketCap) {
+        whereConditions.push(`c.marketCap >= ?`);
+        params.push(filters.minMarketCap);
+      }
+      
+      if (filters?.maxMarketCap) {
+        whereConditions.push(`c.marketCap <= ?`);
+        params.push(filters.maxMarketCap);
+      }
+      
+      const whereClause = whereConditions.length > 0 ? `AND ${whereConditions.join(' AND ')}` : '';
+      
+      // Join query with company data and apply filters
+      const stmt = this.db.prepare(`
+        SELECT 
+          c.id,
+          c.exchange,
+          c.symbol,
+          c.shortName,
+          c.longName,
+          c.sector,
+          c.industry,
+          c.currentPrice,
+          c.marketCap,
+          c.ebitda,
+          c.revenueGrowth,
+          c.city,
+          c.state,
+          c.country,
+          c.fullTimeEmployees,
+          c.longBusinessSummary,
+          c.weight,
+          (1 - vec_distance_cosine(e.embedding, ?) / 2) as similarity
+        FROM company_embeddings e
+        INNER JOIN companies c ON e.company_id = c.id
+        WHERE 1=1 ${whereClause}
+        ORDER BY vec_distance_cosine(e.embedding, ?) ASC
+        LIMIT ${limit}
+      `);
+      
+      // Execute with query embedding twice (for similarity calculation and ordering)
+      const results = stmt.all(queryBuffer, ...params.slice(1), queryBuffer);
+      
+      return results.map((row: any) => ({
+        ...row,
+        similarity: parseFloat(row.similarity)
+      }));
+    } catch (error) {
+      console.error('SQLite optimized vector search error:', error);
       throw error;
     }
   }

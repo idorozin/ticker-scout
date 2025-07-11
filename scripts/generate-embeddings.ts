@@ -99,19 +99,6 @@ export async function generateEmbeddingsForCompanies() {
           // Store the generated embedding in the dedicated vector database
           await vectorDB.storeEmbedding(company.id, embedding);
           
-          // Also update the company record in Prisma to mark embedding as generated
-          // and optionally store the embedding directly in Prisma (for backup/compatibility)
-          const embeddingBuffer = Buffer.from(new Float32Array(embedding).buffer);
-          await prisma.company.update({
-            where: { id: company.id },
-            data: {
-              // @ts-ignore - temporary fix until Prisma client regeneration
-              embedding: embeddingBuffer,
-              // @ts-ignore - temporary fix until Prisma client regeneration
-              embeddingGenerated: true,
-            }
-          });
-          
           processed++;
           console.log(`Processed ${processed}/${companies.length} companies`);
           

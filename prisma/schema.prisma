@@ -30,9 +30,6 @@ model Company {
   fullTimeEmployees     Int?
   longBusinessSummary   String?
   weight                Float?
-  // For SQLite: store as BLOB, for PostgreSQL: store as BLOB (vector extension handled separately)
-  embedding             Bytes?
-  embeddingGenerated    Boolean  @default(false)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 

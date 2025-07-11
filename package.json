@@ -10,7 +10,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx scripts/seed.ts",
     "db:embeddings": "tsx scripts/generate-embeddings.ts",
-    "db:setup": "tsx scripts/setup-complete.ts",
+    "db:setup": "prisma db push && tsx scripts/setup-complete.ts",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio",
     "db:switch-sqlite": "node scripts/switch-db.js sqlite",
